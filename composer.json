@@ -1,0 +1,38 @@
+{
+    "name": "laborb/statamic-bunny-stream",
+    "description": "Upload and embed videos from Bunny Stream",
+    "type": "statamic-addon",
+    "keywords": ["statamic-addon","video","hosting","streaming","bunny.net"],
+    "homepage": "https://www.laborb.de",
+    "autoload": {
+        "psr-4": {
+            "Laborb\\BunnyStream\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "labor b",
+            "email": "support@laborb.de",
+            "homepage": "https://www.laborb.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "statamic/cms": "^5.0"
+    },
+    "support": {
+        "email": "support@laborb.de"
+    },
+    "extra": {
+        "statamic": {
+            "name": "Bunny Stream",
+            "description": "Bunny Stream addon"
+        },
+        "laravel": {
+            "providers": [
+                "Laborb\\BunnyStream\\ServiceProvider"
+            ]
+        }
+    }
+}

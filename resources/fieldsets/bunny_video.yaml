@@ -1,0 +1,74 @@
+title: 'Bunny Video'
+fields:
+  -
+    handle: bunny_video
+    field:
+      type: bunny
+      display: Video
+      validate:
+        - required
+  -
+    handle: bunny_poster
+    field:
+      container: assets
+      type: assets
+      display: Poster
+      instructions: 'You can provide a poster image (thumbnail) which will be displayed before the video is loaded.'
+  -
+    handle: bunny_controls
+    field:
+      type: toggle
+      display: Controls
+      instructions: 'Without controls, the video is muted and played automatically in a loop.'
+  -
+    handle: bunny_captions
+    field:
+      type: replicator
+      display: Captions
+      sets:
+        new_set_group:
+          display: Captions
+          sets:
+            caption:
+              display: Caption
+              fields:
+                -
+                  handle: source
+                  field:
+                    container: assets
+                    type: assets
+                    display: Source
+                    instructions: 'Select a source file that should be added to the video.'
+                    validate:
+                      - required
+                -
+                  handle: language
+                  field:
+                    type: text
+                    display: Language
+                    instructions: 'Add the short code of the provided captions language e.g. en.'
+                    validate:
+                      - required
+                -
+                  handle: label
+                  field:
+                    type: text
+                    display: Label
+                    instructions: 'Define a label that should be displayed for these captions.'
+                    validate:
+                      - required
+                -
+                  handle: kind
+                  field:
+                    options:
+                      -
+                        key: captions
+                        value: Captions
+                      -
+                        key: subtitles
+                        value: Subtitles
+                    max_items: 1
+                    default: captions
+                    type: select
+                    display: Kind
+                    instructions: 'Define what kind of captions you want to display.'
