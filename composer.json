@@ -1,6 +1,6 @@
 {
     "name": "laborb/statamic-bunny-stream",
-    "description": "Upload and embed videos from Bunny Stream",
+    "description": "This addon provides a way to manage gdpr compliant video streams using Bunny.",
     "type": "statamic-addon",
     "keywords": ["statamic-addon","video","hosting","streaming","bunny.net"],
     "homepage": "https://www.laborb.de",
@@ -26,8 +26,8 @@
     },
     "extra": {
         "statamic": {
-            "name": "Bunny Stream",
-            "description": "Bunny Stream addon"
+            "name": "Video Stream GDPR Compliant",
+            "description": "This addon provides a way to manage gdpr compliant video streams using Bunny."
         },
         "laravel": {
             "providers": [

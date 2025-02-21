@@ -1,4 +1,4 @@
-# Bunny Stream
+# Video Stream GDPR Compliant (aka Bunny Stream)
 
 > Bunny Stream is a Statamic add-on that integrates the Bunny Stream API for single stream libraries into the Statamic CP.
 
@@ -9,6 +9,14 @@
 - Delete videos from Bunny Stream.
 - Embed videos using a custom field type or custom tag.
 - Customize the vidstack.io player to your needs or use your own player.
+
+## Bunny Account Required 🐰
+
+To use this addon, you'll need a Bunny.net account. If you don't have one yet, you can sign up using our 
+[affiliate link](https://bunny.net?ref=uhvsqhaw0n). By doing so, you'll be supporting the development of this 
+addon at no extra cost to you. 💙
+
+Thank you for your support! 🚀
 
 ## Installation
 
@@ -134,3 +142,9 @@ You can also just use the Bunny field by adding it to any blueprint.
 
 You can customize the video player to your needs. 
 Check the [vidstack.io](https://vidstack.io/docs/wc/player) documentation for details.
+
+## Support
+
+If you have any questions, feature requests or find any bugs, feel free to [contact us](mailto:support@laborb.de).
+
+You can also just create an issue on Github. We will get back to you as soon as possible.
