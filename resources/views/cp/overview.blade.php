@@ -13,7 +13,7 @@
     ></bunny-overview>
 
     @include('statamic::partials.docs-callout', [
-		'topic' => $addon['name'],
-		'url' => $addon['url'],
-	])
+        'topic' => $addon['name'],
+        'url' => $addon['url'],
+    ])
 @endsection
