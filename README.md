@@ -4,11 +4,22 @@
 
 ## Features
 
-- Upload and rename videos to Bunny Stream.
-- Automatically detect transcoding status.
-- Delete videos from Bunny Stream.
-- Embed videos using a custom field type or custom tag.
-- Customize the vidstack.io player to your needs or use your own player.
+- ✅ **GDPR/DSGVO-Compliant Video Hosting & Embedding**
+  - Fully GDPR/DSGVO-compliant, no cookies or consent manager required
+  - No ads, tracking, or related videos from third parties
+  - EU-based data processing with geo-replicated CDN for global delivery
+- 🔄 **Seamless Statamic Integration**
+  - Native Statamic CP integration for easy uploads & management
+  - Custom thumbnails & cover images for full branding control
+  - Supports background videos with minimal UI mode
+- 🎥 **Advanced Streaming & Vidstack Video Player**
+  - Adaptive Bitrate Streaming (ABR) with HLS for smooth playback
+  - Vidstack Player with full customization (controls, branding, and playback settings)
+  - Multi-format support (HLS, DASH, MP4, WebM) for maximum compatibility
+- ⚙️ **Developer-Friendly & Flexible**
+  - Works with Statamic Bard, Replicator, and Antlers templating
+  - Headless-compatible for API-based or JAMstack integrations
+  - Secure, scalable, and supports token-authenticated video access
 
 ## Bunny Account Required 🐰
 
@@ -142,6 +153,16 @@ You can also just use the Bunny field by adding it to any blueprint.
 
 You can customize the video player to your needs. 
 Check the [vidstack.io](https://vidstack.io/docs/wc/player) documentation for details.
+
+## Disclaimer
+
+This addon is not affiliated with, endorsed by, or sponsored by Bunny.net. It is an independent project designed to 
+integrate Bunny.net's streaming services with Statamic. All trademarks, service marks, and company names mentioned 
+are the property of their respective owners.
+
+Users of this addon are responsible for complying with Bunny.net's terms of service and any applicable usage policies. 
+We recommend reviewing Bunny.net's official documentation and support channels for any inquiries related to their 
+services.
 
 ## Support
 
