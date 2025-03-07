@@ -9,6 +9,7 @@
  * @var int|null $width The width of the video.
  * @var int|null $height The height of the video.
  * @var string|null $preload How the video should be preloaded. Defaults to 'metadata'.
+ * @var bool $controls Whether the video should have controls. Defaults to true.
  * @var array|null $tracks An array of additional tracks that should be added to the video. E.g. captions.
  * @var string|null $class Additional html classes that should be added to the wrapper.
  *
@@ -16,7 +17,7 @@
  */
 ?>
 
-<div id="bunny-{{ $id }}" class="bunny-video {{ $class ?? '' }}"></div>
+<div id="bunny-{{ $id }}" class="bunny-video {{ $class ?? '' }}" @if (!$controls) playsinline autoplay loop muted @endif></div>
 
 <script type="module">
     import { VidstackPlayer, VidstackPlayerLayout } from 'https://cdn.vidstack.io/player';
@@ -31,3 +32,11 @@
         layout: new VidstackPlayerLayout(),
     });
 </script>
+
+@if (!$controls)
+<style>
+    #bunny-{{ $id }} media-video-layout {
+        display: none;
+    }
+</style>
+@endif
