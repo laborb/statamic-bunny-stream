@@ -105,16 +105,17 @@ The bunny tag allows you to display a Bunny video stream using the Vidstack play
 
 ### Parameters
 
-| Parameter | Type              | Description                                                                                      |
-|-----------|-------------------|--------------------------------------------------------------------------------------------------|
-| `id`      | string            | The id of the video you want to display.                                                         |
-| `title`   | string (optional) | A title to display for the video. Defaults to `null`.                                            |
-| `poster`  | string (optional) | A poster image URL to display before the video starts. Defaults to `null`.                       |
-| `width`   | int (optional)    | The width of the video. Defaults to `null`.                                                      |
-| `height`  | int (optional)    | The height of the video. Defaults to `null`.                                                     |
-| `preload` | string (optional) | How the video should be preloaded. Options: `auto`, `metadata`, `none`. Defaults to `metadata`.  |
-| `tracks`  | array (optional)  | An array of additional tracks (e.g., captions, subtitles). Defaults to `[]`.                     |
-| `class`   | string (optional) | Additional HTML classes to be added to the wrapper.                                              |
+| Parameter  | Type               | Description                                                                                     |
+|------------|--------------------|-------------------------------------------------------------------------------------------------|
+| `id`       | string             | The id of the video you want to display.                                                        |
+| `title`    | string (optional)  | A title to display for the video. Defaults to `null`.                                           |
+| `poster`   | string (optional)  | A poster image URL to display before the video starts. Defaults to `null`.                      |
+| `width`    | int (optional)     | The width of the video. Defaults to `null`.                                                     |
+| `height`   | int (optional)     | The height of the video. Defaults to `null`.                                                    |
+| `controls` | boolean (optional) | Whether the video should have controls. Defaults to `true`.                                     |
+| `preload`  | string (optional)  | How the video should be preloaded. Options: `auto`, `metadata`, `none`. Defaults to `metadata`. |
+| `tracks`   | array (optional)   | An array of additional tracks (e.g., captions, subtitles). Defaults to `[]`.                    |
+| `class`    | string (optional)  | Additional HTML classes to be added to the wrapper.                                             |
 
 ### Configuring Tracks Array
 
