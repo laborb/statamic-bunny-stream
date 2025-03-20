@@ -18,6 +18,16 @@ class ServiceProvider extends AddonServiceProvider
         __DIR__ . '/../resources/dist/addon.css',
     ];
 
+    /*
+    protected $vite = [
+        'input' => [
+            'resources/js/addon.js',
+            'resources/css/addon.css'
+        ],
+        'publicDirectory' => 'resources/dist',
+    ];
+    */
+
     protected $routes = [
         'cp' => __DIR__ . '/../routes/cp.php',
         'web' => __DIR__ . '/../routes/web.php',
