@@ -82,6 +82,7 @@ import SpinnerIcon from "../icons/Spinner.vue";
 import TrashIcon from "../icons/Trash.vue";
 import VideoSettings from "./VideoSettings.vue";
 import axios from "axios";
+import {emitter} from '@/utils/emitter.js';
 
 export default {
     components: {VideoSettings, CloudIcon, LinkIcon, TrashIcon, SpinnerIcon, EyeIcon},
@@ -89,6 +90,10 @@ export default {
     props: {
         video: Object,
         assetOptions: Array,
+        loading: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -99,32 +104,65 @@ export default {
             triggerDeletion: false,
         }
     },
+    mounted() {
+        if (this.video.status < 4) {
+            this.polling = setInterval(() => {
+                this.loadVideo();
+            }, 5000);
+        }
+    },
     methods: {
         confirmDeletion() {
             this.triggerDeletion = true;
         },
-        deleteVideo() {
+        loadVideo() {
             this.loading = true;
 
-            const options = {
-                method: 'DELETE',
-                url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.video.guid}`,
-                headers: {
-                    Accept: 'application/json',
-                    AccessKey: this.bunnyApiKey,
-                },
-            };
-
             axios
-                .request(options)
-                .then(() => {
-                    this.cancelDeletion();
-                    this.loading = false;
-                    this.$toast.success(__('Video has been deleted!'));
-                    this.getVideos();
+                .request({
+                    method: 'GET',
+                    url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.video.guid}`,
+                    headers: {
+                        Accept: 'application/json',
+                        AccessKey: this.bunnyApiKey,
+                    },
+                })
+                .then(response => {
+                    this.video = response.data;
+                    if (this.video.status >= 4) {
+                        clearInterval(this.polling);
+                        emitter.emit('load');
+                    }
                 })
                 .catch(function (error) {
                     console.error(error);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        deleteVideo() {
+            this.loading = true;
+
+            axios
+                .request({
+                    method: 'DELETE',
+                    url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.video.guid}`,
+                    headers: {
+                        Accept: 'application/json',
+                        AccessKey: this.bunnyApiKey,
+                    },
+                })
+                .then(() => {
+                    this.cancelDeletion();
+                    clearInterval(this.polling);
+                    emitter.emit('load');
+                })
+                .catch(function (error) {
+                    console.error(error);
+                })
+                .finally(() => {
+                    this.loading = false;
                 });
         },
         cancelDeletion() {

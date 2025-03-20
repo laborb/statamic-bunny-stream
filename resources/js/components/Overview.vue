@@ -30,8 +30,6 @@ export default {
         routeView: String,
     },
     data() {
-        console.log(this.access);
-
         return {};
     },
     provide() {
