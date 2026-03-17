@@ -29,6 +29,12 @@ addon at no extra cost to you. 💙
 
 Thank you for your support! 🚀
 
+## Compatibility
+
+- Statamic `^5.0 || ^6.0`
+- PHP `^8.2`
+- Statamic 6 host apps must run on Laravel 11+
+
 ## Installation
 
 Install the addon using composer:

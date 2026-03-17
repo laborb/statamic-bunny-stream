@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "statamic/cms": "^5.0"
+        "statamic/cms": "^5.0 || ^6.0"
     },
     "support": {
         "email": "support@laborb.de"
