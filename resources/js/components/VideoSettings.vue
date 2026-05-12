@@ -1,68 +1,66 @@
 <template>
     <div>
-        <button @click="isOpen = true">
-            <CogIcon class="size-5"/>
-        </button>
+        <ui-button icon="cog" inset size="xs" variant="ghost" @click="isOpen = true" />
 
         <modal
             v-if="isOpen"
             name="settings"
             @closed="isOpen = false"
         >
-            <div class="flex flex-col h-full">
-                <header
-                    class="text-lg font-semibold px-5 py-3 bg-gray-200 rounded-t-lg flex items-center justify-between border-b">
+            <div class="flex h-full flex-col">
+                <header class="flex items-center justify-between rounded-t-lg border-b px-5 py-3 text-base font-semibold text-gray-900 dark:border-gray-700 dark:text-gray-100">
                     {{ __('Video Settings') }}
                 </header>
-                <div class="flex-1 px-5 py-6 text-gray">
-                    <div class="px-2 m-0 @container form-group publish-field text-fieldtype w-full">
-                        <label for="title" class="block">
+                <div class="flex-1 space-y-4 px-5 py-6 text-gray-700 dark:text-gray-300">
+                    <div class="space-y-2">
+                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Title') }}
                         </label>
-                        <div class="input-group">
-                            <input type="text" id="title" name="title" v-model="videoTitle" class="input-text">
-                        </div>
+                        <ui-input id="title" v-model="videoTitle" name="title" />
                     </div>
 
-                    <div class="px-2 m-0 @container form-group publish-field text-fieldtype w-full">
-                        <label for="thumbnail" class="block">
+                    <div class="space-y-2">
+                        <label for="thumbnail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Thumbnail') }}
                         </label>
-                        <div class="input-group">
-                            <v-select
-                                ref="input"
-                                :input-id="fieldId"
-                                class="flex-1"
-                                append-to-body
-                                :clearable="false"
-                                :disabled="false"
-                                :options="assetOptions"
-                                :placeholder="__('Select new thumbnail')"
-                                :searchable="true"
-                                :multiple="false"
-                                :reset-on-options-change="false"
-                                :close-on-select="true"
-                                :value="selectedThumbnails"
-                                @input="selectThumbnail"
-                                @focus="$emit('focus')"
-                                @search:focus="$emit('focus')"
-                                @search:blur="$emit('blur')">
-                                <template #option="{ label }">
-                                    <template v-text="label"></template>
-                                </template>
-                                <template #selected-option="{ label }">
-                                    <template v-text="label"></template>
-                                </template>
-                                <template #no-options>
-                                    <div class="text-sm text-gray-700 text-left py-2 px-4" v-text="__('No options to choose from.')" />
-                                </template>
-                            </v-select>
-                        </div>
+                        <v-select
+                            ref="input"
+                            :input-id="fieldId"
+                            class="flex-1"
+                            append-to-body
+                            :clearable="false"
+                            :disabled="false"
+                            :options="assetOptions"
+                            :placeholder="__('Select new thumbnail')"
+                            :searchable="true"
+                            :multiple="false"
+                            :reset-on-options-change="false"
+                            :close-on-select="true"
+                            :model-value="selectedThumbnails"
+                            @update:modelValue="selectThumbnail"
+                            @focus="$emit('focus')"
+                            @search:focus="$emit('focus')"
+                            @search:blur="$emit('blur')"
+                        >
+                            <template #option="{ label }">
+                                <template v-text="label"></template>
+                            </template>
+                            <template #selected-option="{ label }">
+                                <template v-text="label"></template>
+                            </template>
+                            <template #no-options>
+                                <div class="px-4 py-2 text-left text-sm text-gray-700" v-text="__('No options to choose from.')" />
+                            </template>
+                        </v-select>
                     </div>
                 </div>
-                <div class="px-5 py-3 bg-gray-200 rounded-b-lg border-t flex items-center justify-end text-sm">
-                    <button class="text-gray hover:text-gray-900" @click="isOpen = false" v-text="__('Cancel')"/>
-                    <button class="ml-4 btn-primary" :class="buttonClass" v-text="__('Save')" @click="save"/>
+                <div class="flex items-center justify-end gap-3 rounded-b-lg border-t px-5 py-3 text-sm dark:border-gray-700">
+                    <ui-button size="sm" variant="ghost" @click="isOpen = false">
+                        {{ __('Cancel') }}
+                    </ui-button>
+                    <ui-button size="sm" variant="primary" @click="save">
+                        {{ __('Save') }}
+                    </ui-button>
                 </div>
             </div>
         </modal>
@@ -70,24 +68,22 @@
 </template>
 
 <script>
-import CogIcon from "../icons/Cog.vue";
 import axios from 'axios';
 import {emitter} from '@/utils/emitter.js';
 
 export default {
-    components: {CogIcon},
     inject: ['bunnyApiKey', 'bunnyHostname', 'bunnyLibrary'],
     props: {
         id: String,
         title: String,
-        assetOptions: [],
+        assetOptions: Array,
     },
     data() {
         return {
             isOpen: false,
             videoTitle: this.title,
             selectedThumbnails: [],
-        }
+        };
     },
     methods: {
         save() {
@@ -110,9 +106,9 @@ export default {
                 headers: {
                     Accept: 'application/json',
                     'content-type': 'application/*+json',
-                    AccessKey: this.bunnyApiKey
+                    AccessKey: this.bunnyApiKey,
                 },
-                data: '{"title":"' + this.videoTitle + '"}'
+                data: '{"title":"' + this.videoTitle + '"}',
             };
 
             axios
@@ -134,8 +130,8 @@ export default {
                 url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.id}/thumbnail?thumbnailUrl=${this.selectedThumbnails[0].url}`,
                 headers: {
                     Accept: 'application/json',
-                    AccessKey: this.bunnyApiKey
-                }
+                    AccessKey: this.bunnyApiKey,
+                },
             };
 
             axios
@@ -155,6 +151,6 @@ export default {
         selectThumbnail(value) {
             this.selectedThumbnails = [value];
         },
-    }
-}
+    },
+};
 </script>

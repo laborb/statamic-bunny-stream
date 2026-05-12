@@ -1,19 +1,93 @@
 @import '@uppy/core/dist/style.css';
 @import '@uppy/dashboard/dist/style.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.animate-spin {
-    animation: spin 1s linear infinite;
+.uppy-Dashboard--modal {
+    z-index: 10000;
+    font-family: inherit;
 }
 
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.uppy-Dashboard--modal .uppy-Dashboard-overlay {
+    z-index: 10000;
+    background-color: color-mix(in oklch, var(--color-gray-925, #111827) 70%, transparent);
+    backdrop-filter: blur(2px);
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-inner {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    width: min(46rem, calc(100vw - 2rem));
+    height: min(34rem, calc(100vh - 2rem));
+    color: var(--theme-color-gray-925, #111827);
+    background-color: var(--theme-color-content-bg, #fff);
+    border: 1px solid var(--theme-color-gray-200, #e5e7eb);
+    border-radius: var(--radius-lg, .5rem);
+    box-shadow: 0 1.25rem 3rem rgb(0 0 0 / .24);
+    transform: translate(-50%, -50%);
+}
+
+.dark .uppy-Dashboard--modal .uppy-Dashboard-inner {
+    color: var(--theme-color-gray-100, #f3f4f6);
+    background-color: var(--theme-color-gray-850, #1f2937);
+    border-color: var(--theme-color-gray-700, #374151);
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-innerWrap,
+.uppy-Dashboard--modal .uppy-Dashboard-AddFiles,
+.uppy-Dashboard--modal .uppy-DashboardContent-panel,
+.uppy-Dashboard--modal .uppy-Dashboard-AddFilesPanel {
+    border-radius: var(--radius-lg, .5rem);
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-AddFiles {
+    height: calc(100% - 1.5rem);
+    margin: .75rem;
+    border-color: var(--theme-color-gray-300, #d1d5db);
+}
+
+.uppy-Dashboard--modal .uppy-DashboardContent-bar,
+.uppy-Dashboard--modal .uppy-StatusBar,
+.uppy-Dashboard--modal .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+    background-color: var(--theme-color-content-bg, #fff);
+    border-color: var(--theme-color-gray-200, #e5e7eb);
+}
+
+.dark .uppy-Dashboard--modal .uppy-DashboardContent-bar,
+.dark .uppy-Dashboard--modal .uppy-StatusBar,
+.dark .uppy-Dashboard--modal .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+    background-color: var(--theme-color-gray-850, #1f2937);
+    border-color: var(--theme-color-gray-700, #374151);
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-close {
+    top: .75rem;
+    right: .75rem;
+    left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--theme-color-gray-700, #374151);
+    font-size: 1.5rem;
+    line-height: 1;
+    background-color: var(--theme-color-content-bg, #fff);
+    border: 1px solid var(--theme-color-gray-200, #e5e7eb);
+    border-radius: var(--radius-md, .375rem);
+    box-shadow: 0 .25rem .75rem rgb(0 0 0 / .12);
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-close:hover,
+.uppy-Dashboard--modal .uppy-Dashboard-close:focus {
+    color: var(--theme-color-gray-925, #111827);
+}
+
+.dark .uppy-Dashboard--modal .uppy-Dashboard-close {
+    color: var(--theme-color-gray-200, #e5e7eb);
+    background-color: var(--theme-color-gray-800, #1f2937);
+    border-color: var(--theme-color-gray-700, #374151);
+}
+
+.dark .uppy-Dashboard--modal .uppy-Dashboard-close:hover,
+.dark .uppy-Dashboard--modal .uppy-Dashboard-close:focus {
+    color: var(--theme-color-gray-50, #f9fafb);
 }

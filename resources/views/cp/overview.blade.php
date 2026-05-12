@@ -12,8 +12,8 @@
         route-embed="{{ $routes['embed'] }}"
     ></bunny-overview>
 
-    @include('statamic::partials.docs-callout', [
-        'topic' => $addon['name'],
-        'url' => $addon['url'],
-    ])
+    <ui-docs-callout
+        topic="{{ $addon['name'] }}"
+        url="{{ $addon['url'] }}"
+    ></ui-docs-callout>
 @endsection

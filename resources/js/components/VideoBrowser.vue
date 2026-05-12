@@ -1,47 +1,60 @@
 <template>
-    <div>
-        <div class="container w-100 lg:w-4/5 mx-auto input-group mb-4">
-            <input type="text" :placeholder="__('Search videos')" @input="debouncedSearch" v-model="search" class="input-text" />
-        </div>
-        <div v-if="loading" class="flex items-center">
-            <div role="status" class="mt-4 mx-auto">
-                <SpinnerIcon class="w-8 h-8 mr-2 animate-spin"/>
+    <div class="space-y-4">
+        <ui-input
+            v-model="search"
+            :placeholder="__('Search videos')"
+            class="w-full md:max-w-md"
+            @update:modelValue="debouncedSearch"
+        />
+
+        <ui-card v-if="loading" class="flex justify-center py-8">
+            <div role="status" class="mx-auto">
+                <SpinnerIcon class="mr-2 h-8 w-8 animate-spin"/>
                 <span class="sr-only">
                     {{ __('Loading...') }}
                 </span>
             </div>
-        </div>
-        <div v-else-if="!loading && result.totalItems >= 1">
-            <div id="card">
-                <div class="container w-100 lg:w-4/5 mx-auto">
-                    <div class="flex flex-col">
-                        <VideoCard v-for="video in result.items" v-bind:key="video.guid" :video="video" :assetOptions="assetOptions" />
-                    </div>
+        </ui-card>
 
-                    <div v-if="result.totalItems > result.items.length" class="flex items-center justify-between">
-                        <button class="btn-primary" @click="prevPage">
-                            &laquo;
-                        </button>
+        <div v-else-if="result && result.totalItems >= 1" class="space-y-3">
+            <VideoCard v-for="video in result.items" v-bind:key="video.guid" :video="video" :assetOptions="assetOptions" />
 
-                        <div>
-                            {{ page }} / {{ maxPage }}
-                        </div>
+            <div v-if="maxPage > 1" class="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-800">
+                <ui-button
+                    icon="chevron-left"
+                    size="sm"
+                    variant="default"
+                    :disabled="page <= 1"
+                    @click="prevPage"
+                />
 
-                        <button class="btn-primary" @click="nextPage">
-                            &raquo;
-                        </button>
-                    </div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ page }} / {{ maxPage }}
                 </div>
+
+                <ui-button
+                    icon="chevron-right"
+                    size="sm"
+                    variant="default"
+                    :disabled="page >= maxPage"
+                    @click="nextPage"
+                />
             </div>
         </div>
-        <div v-else-if="this.search.length > 0" class="text-center text-sm">
+
+        <ui-card v-else-if="search.length > 0" class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
             {{ __('No videos found.') }}
-        </div>
-        <button v-else @click="openUpload()" class="flex flex-col overflow-hidden border-gray-600 border-dashed border-2 rounded shadow-xl w-full mb-4 p-6 items-center justify-center">
-            <h2 class="text-xl">
+        </ui-card>
+
+        <button
+            v-else
+            class="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white px-6 py-10 text-center transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+            @click="openUpload()"
+        >
+            <PlusCircleIcon class="mb-3 h-8 w-8 text-gray-500 dark:text-gray-400" />
+            <span class="text-base font-medium text-gray-900 dark:text-gray-100">
                 {{ __('Upload Video') }}
-            </h2>
-            <PlusCircleIcon class="h-10 w-10" />
+            </span>
         </button>
     </div>
 </template>
@@ -111,7 +124,7 @@ export default {
             };
 
             if (this.search !== '') {
-                options.url += '&search=' + this.search;
+                options.url += '&search=' + encodeURIComponent(this.search);
             }
 
             axios
@@ -132,19 +145,19 @@ export default {
             emitter.emit('load', {page: 1});
         }, 500),
         nextPage() {
-            this.page++;
-            if (this.page > this.maxPage) {
-                this.page = 1;
+            if (this.page >= this.maxPage) {
+                return;
             }
 
+            this.page++;
             this.getVideos();
         },
         prevPage() {
-            this.page--;
-            if (this.page <= 0) {
-                this.page = this.maxPage;
+            if (this.page <= 1) {
+                return;
             }
 
+            this.page--;
             this.getVideos();
         },
     },

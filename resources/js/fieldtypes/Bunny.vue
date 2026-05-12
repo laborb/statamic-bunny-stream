@@ -14,8 +14,8 @@
             :multiple="false"
             :reset-on-options-change="false"
             :close-on-select="true"
-            :value="selectedOptions"
-            @input="vueSelectUpdated"
+            :model-value="selectedOptions"
+            @update:modelValue="vueSelectUpdated"
             @focus="$emit('focus')"
             @search:focus="$emit('focus')"
             @search:blur="$emit('blur')">
@@ -36,7 +36,7 @@
 import axios from 'axios';
 
 export default {
-    mixins: [Fieldtype],
+    mixins: [window.__STATAMIC__.core.FieldtypeMixin],
     data() {
         return {
             loading: true,
@@ -51,7 +51,7 @@ export default {
                 selections = [selections];
             }
             return selections.map(value => {
-                return _.findWhere(this.options, {value}) || { value, label: value };
+                return _.find(this.options, {value}) || { value, label: value };
             });
         },
     },

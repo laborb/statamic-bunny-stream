@@ -1,11 +1,12 @@
 <template>
-    <button class="btn-primary" id="bunny-upload">
-        <PlusIcon class="h-6 w-6" />
+    <ui-button id="bunny-upload" variant="primary" size="sm">
+        <PlusIcon class="size-4" />
         {{ __('Upload Video') }}
-    </button>
+    </ui-button>
 </template>
 
 <script>
+import { markRaw } from 'vue';
 import PlusIcon from "../icons/Plus.vue";
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
@@ -38,10 +39,11 @@ export default {
         initializeUppy() {
             this.expirationTime = this.getExpirationTime();
 
-            this.uploader = new Uppy()
+            this.uploader = markRaw(new Uppy()
                 .use(Dashboard, {
                     inline: false,
                     trigger: '#bunny-upload',
+                    theme: 'auto',
                     width: 'auto',
                     proudlyDisplayPoweredByUppy: false,
                     closeModalOnClickOutside: true,
@@ -56,7 +58,7 @@ export default {
                                     'input',
                                     {
                                         type: 'text',
-                                        class: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input bg-gray-300',
+                                        class: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
                                         value: value,
                                         placeholder: __('Bunny ID'),
                                         disabled: true
@@ -85,7 +87,7 @@ export default {
                             throw '';
                         }
                     }
-                });
+                }));
 
             this.uploader.on('complete', (result) => {
                 if (result.successful.length > 0) {
@@ -99,6 +101,8 @@ export default {
 
                 emitter.emit('load');
             });
+
+            return this.uploader;
         }
     },
     created() {

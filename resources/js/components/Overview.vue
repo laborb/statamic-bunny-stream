@@ -1,10 +1,9 @@
 <template>
-    <div class="flex-grow">
+    <div class="space-y-4">
         <template v-if="access && hostname && library">
-            <div class="flex gap-2 justify-between">
-                <h1 class="flex-grow mb-4">{{ title }}</h1>
+            <ui-header :title="title">
                 <Uploader />
-            </div>
+            </ui-header>
             <VideoBrowser />
         </template>
         <template v-else>
@@ -16,11 +15,10 @@
 <script>
 import VideoBrowser from './VideoBrowser.vue';
 import Uploader from './Uploader.vue';
-import SpinnerIcon from "../icons/Spinner.vue";
 import Affiliate from "./Affiliate.vue";
 
 export default {
-    components: {Affiliate, SpinnerIcon, Uploader, VideoBrowser},
+    components: {Affiliate, Uploader, VideoBrowser},
     props: {
         title: String,
         access: String,
