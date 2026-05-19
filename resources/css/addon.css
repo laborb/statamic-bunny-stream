@@ -8,13 +8,15 @@
 
 .uppy-Dashboard--modal .uppy-Dashboard-overlay {
     z-index: 10000;
-    background-color: color-mix(in oklch, var(--color-gray-925, #111827) 70%, transparent);
-    backdrop-filter: blur(2px);
+    background-color: color-mix(in oklch, var(--color-gray-925, #111827) 58%, transparent);
+    backdrop-filter: none;
+    pointer-events: none;
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
     position: fixed;
     inset: 50% auto auto 50%;
+    z-index: 10001;
     width: min(46rem, calc(100vw - 2rem));
     height: min(34rem, calc(100vh - 2rem));
     color: var(--theme-color-gray-925, #111827);

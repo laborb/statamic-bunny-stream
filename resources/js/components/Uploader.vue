@@ -1,5 +1,5 @@
 <template>
-    <ui-button id="bunny-upload" variant="primary" size="sm">
+    <ui-button ref="trigger" id="bunny-upload" variant="primary" size="sm">
         <PlusIcon class="size-4" />
         {{ __('Upload Video') }}
     </ui-button>
@@ -23,10 +23,28 @@ export default {
     data() {
         return {
             expirationTime: 0,
-            uploader: null
+            uploader: null,
+            uploadListener: null,
         };
     },
     methods: {
+        getTriggerElement() {
+            return this.$refs.trigger?.$el || document.getElementById('bunny-upload');
+        },
+        focusUploadTrigger() {
+            window.requestAnimationFrame(() => {
+                this.getTriggerElement()?.focus?.();
+            });
+        },
+        focusModalContent() {
+            window.requestAnimationFrame(() => {
+                const modalControl = document.querySelector(
+                    '.uppy-Dashboard--modal .uppy-Dashboard-close, .uppy-Dashboard--modal [data-uppy-super-focusable]'
+                );
+
+                modalControl?.focus?.();
+            });
+        },
         getExpirationTime() {
             const d = new Date();
             d.setDate(d.getDate() + 1);
@@ -46,7 +64,7 @@ export default {
                     theme: 'auto',
                     width: 'auto',
                     proudlyDisplayPoweredByUppy: false,
-                    closeModalOnClickOutside: true,
+                    closeModalOnClickOutside: false,
                     closeAfterFinish: true,
                     metaFields: [
                         { id: 'name', name: __('Name'), placeholder: __('Filename') },
@@ -89,6 +107,14 @@ export default {
                     }
                 }));
 
+            this.uploader.on('dashboard:modal-open', () => {
+                this.focusModalContent();
+            });
+
+            this.uploader.on('dashboard:modal-closed', () => {
+                this.focusUploadTrigger();
+            });
+
             this.uploader.on('complete', (result) => {
                 if (result.successful.length > 0) {
                     const message = result.successful.length === 1 ? __('1 video uploaded successfully.') : __(':count videos successfully uploaded.', { count: result.successful.length });
@@ -106,10 +132,21 @@ export default {
         }
     },
     created() {
-        emitter.on('upload', () => document.getElementById('bunny-upload').click());
+        this.uploadListener = () => {
+            this.getTriggerElement()?.click?.();
+        };
+
+        emitter.on('upload', this.uploadListener);
     },
     mounted() {
         this.initializeUppy();
+    },
+    beforeUnmount() {
+        if (this.uploadListener) {
+            emitter.off('upload', this.uploadListener);
+        }
+
+        this.uploader?.destroy?.();
     }
 };
 </script>
