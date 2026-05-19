@@ -23,35 +23,20 @@
                         <label for="thumbnail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Thumbnail') }}
                         </label>
-                        <v-select
+                        <ui-select
                             ref="input"
-                            :input-id="fieldId"
                             class="flex-1"
-                            append-to-body
                             :clearable="false"
                             :disabled="false"
                             :options="assetOptions"
+                            option-label="label"
+                            option-value="url"
                             :placeholder="__('Select new thumbnail')"
                             :searchable="true"
-                            :multiple="false"
-                            :reset-on-options-change="false"
-                            :close-on-select="true"
-                            :model-value="selectedThumbnails"
+                            :model-value="selectedThumbnailUrl"
                             @update:modelValue="selectThumbnail"
                             @focus="$emit('focus')"
-                            @search:focus="$emit('focus')"
-                            @search:blur="$emit('blur')"
-                        >
-                            <template #option="{ label }">
-                                <template v-text="label"></template>
-                            </template>
-                            <template #selected-option="{ label }">
-                                <template v-text="label"></template>
-                            </template>
-                            <template #no-options>
-                                <div class="px-4 py-2 text-left text-sm text-gray-700" v-text="__('No options to choose from.')" />
-                            </template>
-                        </v-select>
+                        />
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 rounded-b-lg border-t px-5 py-3 text-sm dark:border-gray-700">
@@ -82,7 +67,7 @@ export default {
         return {
             isOpen: false,
             videoTitle: this.title,
-            selectedThumbnails: [],
+            selectedThumbnailUrl: null,
         };
     },
     methods: {
@@ -92,7 +77,7 @@ export default {
                 this.changeTitle();
             }
 
-            if (this.selectedThumbnails.length > 0) {
+            if (this.selectedThumbnailUrl) {
                 this.$progress.start('thumbnail');
                 this.changeThumbnail();
             }
@@ -127,7 +112,7 @@ export default {
         changeThumbnail() {
             const options = {
                 method: 'POST',
-                url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.id}/thumbnail?thumbnailUrl=${this.selectedThumbnails[0].url}`,
+                url: `https://video.bunnycdn.com/library/${this.bunnyLibrary}/videos/${this.id}/thumbnail?thumbnailUrl=${this.selectedThumbnailUrl}`,
                 headers: {
                     Accept: 'application/json',
                     AccessKey: this.bunnyApiKey,
@@ -139,6 +124,7 @@ export default {
                 .then(() => {
                     this.$toast.success(__('Thumbnail has been updated!'));
                     this.thumbnailUrl = null;
+                    this.selectedThumbnailUrl = null;
                     this.$progress.complete('thumbnail');
                     emitter.emit('load');
                 })
@@ -149,7 +135,7 @@ export default {
                 });
         },
         selectThumbnail(value) {
-            this.selectedThumbnails = [value];
+            this.selectedThumbnailUrl = value || null;
         },
     },
 };

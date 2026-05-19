@@ -1,34 +1,21 @@
 <template>
     <div>
-        <v-select
+        <ui-select
             ref="input"
             :input-id="fieldId"
             class="flex-1"
-            append-to-body
             :name="name"
             :clearable="false"
             :disabled="false"
             :options="options"
+            option-label="label"
+            option-value="value"
             :placeholder="__('Select Video...')"
             :searchable="true"
-            :multiple="false"
-            :reset-on-options-change="false"
-            :close-on-select="true"
-            :model-value="selectedOptions"
-            @update:modelValue="vueSelectUpdated"
+            :model-value="selectedValue"
+            @update:modelValue="uiSelectUpdated"
             @focus="$emit('focus')"
-            @search:focus="$emit('focus')"
-            @search:blur="$emit('blur')">
-                <template #option="{ label }">
-                    <template v-text="label"></template>
-                </template>
-                <template #selected-option="{ label }">
-                    <template v-text="label"></template>
-                </template>
-                <template #no-options>
-                    <div class="text-sm text-gray-700 text-left py-2 px-4" v-text="__('No options to choose from.')" />
-                </template>
-        </v-select>
+        />
     </div>
 </template>
 
@@ -45,14 +32,18 @@ export default {
         };
     },
     computed: {
-        selectedOptions() {
-            let selections = this.value || [];
-            if (typeof selections === 'string' || typeof selections === 'number') {
-                selections = [selections];
+        selectedValue() {
+            let selection = this.value;
+
+            if (Array.isArray(selection)) {
+                selection = selection[0] ?? null;
             }
-            return selections.map(value => {
-                return _.find(this.options, {value}) || { value, label: value };
-            });
+
+            if (selection === null || selection === undefined || selection === '') {
+                return null;
+            }
+
+            return selection;
         },
     },
     created() {
@@ -60,6 +51,12 @@ export default {
     },
     methods: {
         getVideos() {
+            if (!this.meta.api || !this.meta.library) {
+                this.loading = false;
+                this.options = [];
+                return;
+            }
+
             const options = {
                 method: 'GET',
                 url: 'https://video.bunnycdn.com/library/' + this.meta.library + '/videos?page=1&itemsPerPage=100&orderBy=date',
@@ -72,32 +69,28 @@ export default {
             axios
             .request(options)
             .then((response) => {
-                this.videos = response.data;
+                this.videos = response.data?.items || [];
                 this.loading = false;
 
                 this.arrangeVideos();
             })
-            .catch(function (error) {
+            .catch((error) => {
+                this.loading = false;
+                this.options = [];
                 console.error(error);
             });
         },
         arrangeVideos() {
-            this.videos.items.forEach((video) => {
-                this.options.push({
-                    value: video.guid,
-                    label: video.title + ' (' + new Date(video.dateUploaded).toLocaleString() + ')'
-                });
-            });
+            this.options = this.videos.map((video) => ({
+                value: video.guid,
+                label: video.title + ' (' + new Date(video.dateUploaded).toLocaleString() + ')'
+            }));
         },
         focus() {
-            this.$refs.input.focus();
+            this.$refs.input?.focus?.();
         },
-        vueSelectUpdated(value) {
-            if (value) {
-                this.update(value.value)
-            } else {
-                this.update(null);
-            }
+        uiSelectUpdated(value) {
+            this.update(value || null);
         },
     }
 };
