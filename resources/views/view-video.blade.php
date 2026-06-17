@@ -9,6 +9,7 @@
  *
  * @see https://docs.bunny.net/reference/video_getvideo
  */
+$description = $videoData['description'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -17,12 +18,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ $description }}">
 
     <meta property="og:url" content="{{ $embedUrl }}" />
     <meta property="og:image" content="{{ $poster }}" />
     <meta property="og:image:secure_url" content="{{ $poster }}" />
     <meta property="og:site_name" content="{{ config('app.name') }}" />
     <meta property="og:title" content="{{ $videoData['title'] }}" />
+    <meta property="og:description" content="{{ $description }}" />
     <meta property="og:type" content="video.other" />
 
     <meta property="og:video:url" content="{{ $source }}" />
@@ -37,6 +40,7 @@
     <meta property="twitter:domain" content="{{ request()->root() }}">
     <meta property="twitter:url" content="{{ $embedUrl }}">
     <meta name="twitter:title" content="{{ $videoData['title'] }}">
+    <meta name="twitter:description" content="{{ $description }}">
     <meta name="twitter:image" content="{{ $poster }}">
     <meta name="twitter:player" content="{{ $embedUrl }}">
     <meta name="twitter:player:width" content="{{ $videoData['width'] }}">
@@ -49,7 +53,7 @@
           "@context": "https://schema.org",
           "@type": "VideoObject",
           "name": "{{ $videoData['title'] }}",
-          "description": "",
+          "description": @json($description),
           "thumbnailUrl": "{{ $poster }}",
           "embedUrl": "{{ $embedUrl }}"
         }
