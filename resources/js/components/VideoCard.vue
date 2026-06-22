@@ -2,7 +2,7 @@
     <div>
         <ui-card
             v-if="localVideo.status >= 4"
-            class="mb-4 overflow-hidden p-0!"
+            class="h-full overflow-hidden p-0!"
         >
             <div class="sm:grid sm:grid-cols-3 overflow-hidden">
                 <a :href="videoUrl" target="_blank" class="block">
@@ -13,34 +13,42 @@
                         <a :href="videoUrl" target="_blank" class="min-w-0 grow truncate text-base leading-tight font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">
                             {{ localVideo.title }}
                         </a>
-                        <div class="flex items-center gap-1">
-                            <VideoSettings :id="localVideo.guid" :title="localVideo.title" :assetOptions="assetOptions" />
-                            <ui-button icon="trash" size="xs" variant="ghost" @click="confirmDeletion()" />
+                        <div class="flex items-center gap-1.5">
+                            <VideoSettings :video="localVideo" :assetOptions="assetOptions" />
+                            <button
+                                ref="deleteButton"
+                                class="bunny-icon-button bunny-icon-button--danger"
+                                type="button"
+                                :aria-label="__('Delete video :title', {title: localVideo.title})"
+                                @click.stop="confirmDeletion"
+                            >
+                                <TrashIcon />
+                            </button>
                         </div>
                     </div>
 
                     <p class="flex flex-wrap gap-2 text-xs whitespace-nowrap md:gap-4 md:text-sm">
                         <a v-if="viewUrl" :href="viewUrl" target="_blank" class="flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
                             {{ __('Direct Play') }}
-                            <LinkIcon class="size-4" />
+                            <LinkIcon class="size-5" />
                         </a>
                         <a v-if="embedUrl" :href="embedUrl" target="_blank" class="flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
                             {{ __('Embed URL') }}
-                            <LinkIcon class="size-4" />
+                            <LinkIcon class="size-5" />
                         </a>
                         <a :href="thumbnailUrl" target="_blank" class="flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
                             {{ __('Thumbnail') }}
-                            <LinkIcon class="size-4" />
+                            <LinkIcon class="size-5" />
                         </a>
                     </p>
 
                     <div class="flex justify-between gap-4 text-xs text-gray-500 dark:text-gray-400 md:text-sm">
                         <div class="flex items-center gap-2">
-                            <CloudIcon class="size-4 text-gray-500" />
+                            <CloudIcon class="size-5 text-gray-500" />
                             {{ new Date(localVideo.dateUploaded).toLocaleString() }}
                         </div>
                         <div class="flex items-center gap-2">
-                            <EyeIcon class="size-4 text-gray-500" />
+                            <EyeIcon class="size-5 text-gray-500" />
                             {{ localVideo.views }}
                         </div>
                     </div>
@@ -49,7 +57,7 @@
         </ui-card>
         <ui-card
             v-else
-            class="mb-4 flex flex-col items-center justify-center gap-3 text-center"
+            class="flex h-full flex-col items-center justify-center gap-3 text-center"
         >
             <div class="text-lg font-medium text-gray-900 dark:text-gray-100">
                 {{ __('Video is being processed') }} &ndash; {{ encodeProgress }}%
@@ -57,22 +65,38 @@
             <p class="text-xs text-gray-500 dark:text-gray-400">
                 {{ __('This may take some time.') }}
             </p>
-            <ui-button size="xs" variant="danger" @click="confirmDeletion()">
+            <button ref="deleteButton" class="btn-danger text-xs" type="button" @click="confirmDeletion">
                 {{ __('Cancel and delete video') }}
-            </ui-button>
+            </button>
             <div role="status" class="mx-auto mt-2">
                 <SpinnerIcon class="mr-2 h-8 w-8 animate-spin"/>
                 <span class="sr-only">{{ __('Loading...') }}</span>
             </div>
         </ui-card>
 
-        <confirmation-modal
-            v-if="triggerDeletion"
-            :title="__('Delete video :title', {title: localVideo.title})"
-            @confirm="deleteVideo"
-            @cancel="cancelDeletion"
-            danger="true"
-        />
+        <teleport to="body">
+            <div
+                v-if="deletionConfirmationStep > 0"
+                class="bunny-settings-modal"
+                role="dialog"
+                aria-modal="true"
+                @click.self="cancelDeletion"
+            >
+                <div class="bunny-settings-modal__panel bunny-delete-modal flex flex-col">
+                    <header class="rounded-t-lg border-b px-5 py-3 text-base font-semibold text-gray-900 dark:border-gray-700 dark:text-gray-100">
+                        {{ deletionConfirmationTitle }}
+                    </header>
+                    <div class="flex items-center justify-end gap-3 rounded-b-lg px-5 py-3 text-sm">
+                        <ui-button size="sm" variant="ghost" @click="cancelDeletion">
+                            {{ __('Cancel') }}
+                        </ui-button>
+                        <ui-button size="sm" variant="danger" @click="confirmDeletionStep">
+                            {{ deletionConfirmationButton }}
+                        </ui-button>
+                    </div>
+                </div>
+            </div>
+        </teleport>
     </div>
 </template>
 
@@ -81,12 +105,13 @@ import CloudIcon from "../icons/Cloud.vue";
 import EyeIcon from "../icons/Eye.vue";
 import LinkIcon from "../icons/Link.vue";
 import SpinnerIcon from "../icons/Spinner.vue";
+import TrashIcon from "../icons/Trash.vue";
 import VideoSettings from "./VideoSettings.vue";
 import axios from "axios";
 import {emitter} from '@/utils/emitter.js';
 
 export default {
-    components: {VideoSettings, CloudIcon, LinkIcon, SpinnerIcon, EyeIcon},
+    components: {VideoSettings, CloudIcon, LinkIcon, SpinnerIcon, EyeIcon, TrashIcon},
     inject: ['bunnyApiKey', 'bunnyHostname', 'bunnyLibrary', 'routeEmbed', 'routeView'],
     props: {
         video: Object,
@@ -103,7 +128,7 @@ export default {
             viewUrl: this.routeView ? this.routeView.replace(':video:', this.video.guid) : null,
             thumbnailUrl: `https://${this.bunnyHostname}/${this.video.guid}/${this.video.thumbnailFileName}`,
             videoUrl: `https://iframe.mediadelivery.net/play/${this.video.videoLibraryId}/${this.video.guid}`,
-            triggerDeletion: false,
+            deletionConfirmationStep: 0,
         }
     },
     computed: {
@@ -112,17 +137,41 @@ export default {
 
             return Math.min(100, Math.max(0, Math.round(progress)));
         },
+        deletionConfirmationTitle() {
+            if (this.deletionConfirmationStep === 2) {
+                return __('Permanently delete :title from Bunny?', {title: this.localVideo.title});
+            }
+
+            return __('Delete video :title', {title: this.localVideo.title});
+        },
+        deletionConfirmationButton() {
+            return this.deletionConfirmationStep === 2 ? __('Delete from Bunny') : __('Continue');
+        },
     },
     mounted() {
+        this.$refs.deleteButton?.addEventListener('click', this.confirmDeletion);
+
         if (this.localVideo.status < 4) {
             this.polling = setInterval(() => {
                 this.loadVideo();
             }, 5000);
         }
     },
+    beforeUnmount() {
+        this.$refs.deleteButton?.removeEventListener('click', this.confirmDeletion);
+        clearInterval(this.polling);
+    },
     methods: {
         confirmDeletion() {
-            this.triggerDeletion = true;
+            this.deletionConfirmationStep = 1;
+        },
+        confirmDeletionStep() {
+            if (this.deletionConfirmationStep < 2) {
+                this.deletionConfirmationStep += 1;
+                return;
+            }
+
+            this.deleteVideo();
         },
         loadVideo() {
             this.loading = true;
@@ -175,7 +224,7 @@ export default {
                 });
         },
         cancelDeletion() {
-            this.triggerDeletion = false;
+            this.deletionConfirmationStep = 0;
         },
     }
 }

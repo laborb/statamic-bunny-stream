@@ -16,11 +16,12 @@
             </div>
         </ui-card>
 
-        <div v-else-if="result && result.totalItems >= 1" class="space-y-3">
+        <div v-else-if="result && result.totalItems >= 1" class="bunny-video-grid">
             <VideoCard v-for="video in result.items" v-bind:key="video.guid" :video="video" :assetOptions="assetOptions" />
 
-            <div v-if="maxPage > 1" class="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-800">
+            <div v-if="maxPage > 1" class="bunny-video-grid__pagination flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-800">
                 <ui-button
+                    class="bunny-icon-button"
                     icon="chevron-left"
                     size="sm"
                     variant="default"
@@ -33,6 +34,7 @@
                 </div>
 
                 <ui-button
+                    class="bunny-icon-button"
                     icon="chevron-right"
                     size="sm"
                     variant="default"
@@ -51,7 +53,7 @@
             class="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white px-6 py-10 text-center transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
             @click="openUpload()"
         >
-            <PlusCircleIcon class="mb-3 h-8 w-8 text-gray-500 dark:text-gray-400" />
+            <PlusCircleIcon class="mb-3 h-10 w-10 text-gray-500 dark:text-gray-400" />
             <span class="text-base font-medium text-gray-900 dark:text-gray-100">
                 {{ __('Upload Video') }}
             </span>
