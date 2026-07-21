@@ -1,10 +1,18 @@
 <template>
     <div>
-        <ui-button class="bunny-icon-button" icon="cog" inset size="sm" variant="ghost" @click="isOpen = true" />
+        <ui-button
+            class="bunny-icon-button"
+            icon="cog"
+            inset
+            size="sm"
+            variant="ghost"
+            :aria-label="__('Video Settings')"
+            :title="__('Video Settings')"
+            @click="isOpen = true"
+        />
 
-        <teleport to="body">
+        <bunny-portal v-if="isOpen">
             <div
-                v-if="isOpen"
                 class="bunny-settings-modal"
                 role="dialog"
                 aria-modal="true"
@@ -126,7 +134,7 @@
                 </div>
                 </div>
             </div>
-        </teleport>
+        </bunny-portal>
     </div>
 </template>
 
@@ -162,7 +170,7 @@ export default {
                 return this.assetOptions.slice(0, 80);
             }
 
-            // ponytail: render the first matches only; search narrows big asset libraries.
+            // Limit rendered matches for large asset libraries.
             return this.assetOptions.filter((option) => String(option.label || '').toLowerCase().includes(search)).slice(0, 80);
         },
         selectedThumbnailLabel() {
@@ -309,7 +317,7 @@ export default {
                 .join('\n');
         },
         parseAdditionalMetaTags() {
-            // ponytail: Custom Bunny metadata is arbitrary metaTags, so one property=value line parser is enough.
+            // Bunny metadata is arbitrary, so one property=value pair per line is enough.
             return this.additionalMetaTagsText
                 .split(/\r?\n/)
                 .map((line) => line.trim())

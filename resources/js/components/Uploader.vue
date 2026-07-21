@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { markRaw } from 'vue';
+import { markRaw } from '../compat/reactivity.js';
 import PlusIcon from "../icons/Plus.vue";
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
@@ -50,6 +50,9 @@ export default {
             d.setDate(d.getDate() + 1);
             return d.getTime();
         },
+        openUploader() {
+            this.uploader?.getPlugin('Dashboard')?.openModal();
+        },
         getAuthorizationSignature(videoId) {
             const signature = this.bunnyLibrary + this.bunnyApiKey + this.expirationTime + videoId;
             return sha256(signature);
@@ -57,10 +60,9 @@ export default {
         initializeUppy() {
             this.expirationTime = this.getExpirationTime();
 
-            this.uploader = markRaw(new Uppy()
+            const uploader = new Uppy()
                 .use(Dashboard, {
                     inline: false,
-                    trigger: '#bunny-upload',
                     theme: 'auto',
                     width: 'auto',
                     proudlyDisplayPoweredByUppy: false,
@@ -105,7 +107,9 @@ export default {
                             throw '';
                         }
                     }
-                }));
+                });
+
+            this.uploader = markRaw(uploader);
 
             this.uploader.on('dashboard:modal-open', () => {
                 this.focusModalContent();
@@ -129,7 +133,18 @@ export default {
             });
 
             return this.uploader;
-        }
+        },
+        destroyUploader() {
+            this.getTriggerElement()?.removeEventListener('click', this.openUploader);
+
+            if (this.uploadListener) {
+                emitter.off('upload', this.uploadListener);
+                this.uploadListener = null;
+            }
+
+            this.uploader?.destroy?.();
+            this.uploader = null;
+        },
     },
     created() {
         this.uploadListener = () => {
@@ -140,13 +155,13 @@ export default {
     },
     mounted() {
         this.initializeUppy();
+        this.getTriggerElement()?.addEventListener('click', this.openUploader);
     },
     beforeUnmount() {
-        if (this.uploadListener) {
-            emitter.off('upload', this.uploadListener);
-        }
-
-        this.uploader?.destroy?.();
-    }
+        this.destroyUploader();
+    },
+    beforeDestroy() {
+        this.destroyUploader();
+    },
 };
 </script>

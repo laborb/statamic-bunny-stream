@@ -258,6 +258,11 @@
     height: 1.125rem;
 }
 
+.bunny-v5-icon-button {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
 .bunny-icon-button--danger:hover,
 .bunny-icon-button--danger:focus {
     color: var(--color-red-600, #dc2626);

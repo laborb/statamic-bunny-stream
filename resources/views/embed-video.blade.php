@@ -8,7 +8,7 @@
  * @var string $embedUrl Url for embedding this video.
  * @var array $videoData Detailed video data as returned by the Bunny API.
  *
- * @see https://docs.bunny.net/reference/video_getvideo
+ * @see https://docs.bunny.net/api-reference/stream/manage-videos/get-video
  */
 $description = $videoData['description'] ?? '';
 ?>

@@ -74,9 +74,8 @@
             </div>
         </ui-card>
 
-        <teleport to="body">
+        <bunny-portal v-if="deletionConfirmationStep > 0">
             <div
-                v-if="deletionConfirmationStep > 0"
                 class="bunny-settings-modal"
                 role="dialog"
                 aria-modal="true"
@@ -96,7 +95,7 @@
                     </div>
                 </div>
             </div>
-        </teleport>
+        </bunny-portal>
     </div>
 </template>
 
@@ -149,8 +148,6 @@ export default {
         },
     },
     mounted() {
-        this.$refs.deleteButton?.addEventListener('click', this.confirmDeletion);
-
         if (this.localVideo.status < 4) {
             this.polling = setInterval(() => {
                 this.loadVideo();
@@ -158,10 +155,15 @@ export default {
         }
     },
     beforeUnmount() {
-        this.$refs.deleteButton?.removeEventListener('click', this.confirmDeletion);
-        clearInterval(this.polling);
+        this.destroy();
+    },
+    beforeDestroy() {
+        this.destroy();
     },
     methods: {
+        destroy() {
+            clearInterval(this.polling);
+        },
         confirmDeletion() {
             this.deletionConfirmationStep = 1;
         },

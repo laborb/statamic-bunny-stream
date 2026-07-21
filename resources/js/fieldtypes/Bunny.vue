@@ -22,8 +22,10 @@
 <script>
 import axios from 'axios';
 
+const FieldtypeMixin = window.__STATAMIC__?.core?.FieldtypeMixin || window.Fieldtype;
+
 export default {
-    mixins: [window.__STATAMIC__.core.FieldtypeMixin],
+    mixins: [FieldtypeMixin],
     data() {
         return {
             loading: true,

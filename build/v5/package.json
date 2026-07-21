@@ -1,0 +1,12 @@
+{
+    "name": "@laborb/bunny-stream-v5-build",
+    "private": true,
+    "scripts": {
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue2": "^2.3.4",
+        "vite": "^4.5.9",
+        "vue": "^2.7.16"
+    }
+}

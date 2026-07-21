@@ -1,7 +1,10 @@
-import Field from './fieldtypes/Bunny.vue';
-import Overview from './components/Overview.vue';
+import { markRaw as vueMarkRaw } from 'vue';
+import { registerComponents } from './register.js';
+import Portal from './compat/v6/Portal.vue';
+import { configureMarkRaw } from './compat/reactivity.js';
 
 Statamic.booting(() => {
-    Statamic.$components.register('bunny-overview', Overview);
-    Statamic.$components.register('bunny-fieldtype', Field);
+    configureMarkRaw(vueMarkRaw);
+    Statamic.$components.register('bunny-portal', Portal);
+    registerComponents();
 });

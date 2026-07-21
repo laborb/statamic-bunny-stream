@@ -12,8 +12,15 @@
         route-embed="{{ $routes['embed'] }}"
     ></bunny-overview>
 
-    <ui-docs-callout
-        topic="{{ $addon['name'] }}"
-        url="{{ $addon['url'] }}"
-    ></ui-docs-callout>
+    @if (version_compare(\Statamic\Statamic::version(), '6.0.0', '>='))
+        <ui-docs-callout
+            topic="{{ $addon['name'] }}"
+            url="{{ $addon['url'] }}"
+        ></ui-docs-callout>
+    @else
+        @include('statamic::partials.docs-callout', [
+            'topic' => $addon['name'],
+            'url' => $addon['url'],
+        ])
+    @endif
 @endsection

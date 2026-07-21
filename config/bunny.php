@@ -9,7 +9,8 @@ return [
     'hostname' => env('BUNNY_CDN_HOSTNAME'),
 
     // The API key for authenticating requests to the Bunny Stream API.
-    // This should be kept secure and not exposed in frontend code.
+    // It is delivered to authenticated Control Panel JavaScript for direct API requests.
+    // Treat Control Panel access as privileged and never expose it in public templates.
     'api_key' => env('BUNNY_API_KEY'),
 
     // Embedding video is disabled by default. Add a path to enable this feature.
@@ -18,8 +19,8 @@ return [
         // This is useful for defining the structure of embed URLs.
         'path' => env('BUNNY_EMBED_PATH'),
 
-        // The allowed domain for embedding videos.
-        // The default value of '*' allows embedding on any domain.
+        // CSP frame-ancestors source list for the iframe response.
+        // The default value of '*' allows embedding from any origin.
         'domain' => env('BUNNY_EMBED_DOMAIN', '*'),
     ],
 
