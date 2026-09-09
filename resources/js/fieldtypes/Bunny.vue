@@ -23,6 +23,10 @@
 import axios from 'axios';
 
 const FieldtypeMixin = window.__STATAMIC__?.core?.FieldtypeMixin || window.Fieldtype;
+const videoTitleCollator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base'
+});
 
 export default {
     mixins: [FieldtypeMixin],
@@ -83,10 +87,12 @@ export default {
             });
         },
         arrangeVideos() {
-            this.options = this.videos.map((video) => ({
-                value: video.guid,
-                label: video.title + ' (' + new Date(video.dateUploaded).toLocaleString() + ')'
-            }));
+            this.options = [...this.videos]
+                .sort((a, b) => videoTitleCollator.compare(a.title || '', b.title || ''))
+                .map((video) => ({
+                    value: video.guid,
+                    label: video.title + ' (' + new Date(video.dateUploaded).toLocaleString() + ')'
+                }));
         },
         focus() {
             this.$refs.input?.focus?.();
