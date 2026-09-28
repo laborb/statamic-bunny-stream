@@ -199,6 +199,8 @@ npm run dev
 
 `npm run dev` targets the Statamic 6/Vue 3 bundle. `npm run build` must pass before publishing because it creates both production bundles.
 
+Both production bundles use IIFE scope because Statamic loads them as classic scripts. This keeps dependency helpers such as `encodeURI` from shadowing browser globals and breaking other control-panel components (for example focal-point previews).
+
 ## Customization
 
 Publish the views for markup changes and the config for player asset changes. See the [Vidstack player documentation](https://vidstack.io/docs/wc/player) for its API and styling options.
