@@ -1,3 +1,4 @@
+import '../css/addon.css';
 import { markRaw as vueMarkRaw } from 'vue';
 import { registerComponents } from './register.js';
 import Portal from './compat/v6/Portal.vue';
