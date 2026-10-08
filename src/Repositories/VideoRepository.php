@@ -8,38 +8,42 @@ use Illuminate\Support\Facades\Log;
 
 class VideoRepository
 {
-    public function fetch(string $video, ?int $ttl = null): ?array
+    public function fetch(string $video): ?array
     {
-        $fetch = function () use ($video, $ttl) {
-            try {
-                $request = Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'AccessKey' => config('statamic.bunny.api_key'),
-                ]);
+        return Cache::rememberForever('bunny:' . $video, fn () => $this->request($video));
+    }
 
-                if ($ttl !== null) {
-                    $request->connectTimeout(3)->timeout(5);
-                }
+    public function fetchMetadata(string $video): ?array
+    {
+        return Cache::remember('bunny:metadata:' . config('statamic.bunny.library_id') . ':' . $video, 300,
+            fn () => $this->request($video, 5));
+    }
 
-                $result = $request->get(vsprintf('https://video.bunnycdn.com/library/%s/videos/%s', [
-                    config('statamic.bunny.library_id'),
-                    $video,
-                ]));
+    private function request(string $video, ?int $timeout = null): ?array
+    {
+        try {
+            $request = Http::withHeaders([
+                'Accept' => 'application/json',
+                'AccessKey' => config('statamic.bunny.api_key'),
+            ]);
 
-                if (!$result->successful()) {
-                    throw new \Exception('Unable to find video.');
-                }
-            } catch (\Throwable $e) {
-                Log::error($e->getMessage());
-                return null;
+            if ($timeout !== null) {
+                $request->connectTimeout(3)->timeout($timeout);
             }
 
-            return $result->json();
-        };
+            $result = $request->get(vsprintf('https://video.bunnycdn.com/library/%s/videos/%s', [
+                config('statamic.bunny.library_id'),
+                $video,
+            ]));
 
-        // Preserve the existing player cache; metadata needs a bounded, library-specific cache.
-        return $ttl === null
-            ? Cache::rememberForever('bunny:' . $video, $fetch)
-            : Cache::remember('bunny:metadata:' . config('statamic.bunny.library_id') . ':' . $video, $ttl, $fetch);
+            if (!$result->successful()) {
+                throw new \Exception('Unable to find video.');
+            }
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
+
+        return $result->json();
     }
 }

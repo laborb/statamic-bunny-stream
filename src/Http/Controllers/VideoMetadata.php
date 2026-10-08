@@ -9,7 +9,7 @@ class VideoMetadata
 {
     public function __invoke(string $video, VideoRepository $repository): JsonResponse
     {
-        $data = $repository->fetch($video, 300);
+        $data = $repository->fetchMetadata($video);
 
         if (empty($data)) {
             return response()->json(['message' => 'Video metadata unavailable.'], 503)
