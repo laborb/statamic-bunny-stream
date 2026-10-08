@@ -13,6 +13,9 @@ return [
     // Treat Control Panel access as privileged and never expose it in public templates.
     'api_key' => env('BUNNY_API_KEY'),
 
+    // Opt-in public endpoint. Only exposes allowlisted playback/accessibility metadata.
+    'metadata_path' => env('BUNNY_METADATA_PATH'),
+
     // Embedding video is disabled by default. Add a path to enable this feature.
     'embedding' => [
         // The relative path where embedded videos will be accessed.

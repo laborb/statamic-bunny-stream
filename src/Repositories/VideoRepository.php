@@ -8,14 +8,20 @@ use Illuminate\Support\Facades\Log;
 
 class VideoRepository
 {
-    public function fetch(string $video): ?array
+    public function fetch(string $video, ?int $ttl = null): ?array
     {
-        return Cache::rememberForever('bunny:' . $video, function () use ($video) {
+        $fetch = function () use ($video, $ttl) {
             try {
-                $result = Http::withHeaders([
+                $request = Http::withHeaders([
                     'Accept' => 'application/json',
                     'AccessKey' => config('statamic.bunny.api_key'),
-                ])->get(vsprintf('https://video.bunnycdn.com/library/%s/videos/%s', [
+                ]);
+
+                if ($ttl !== null) {
+                    $request->connectTimeout(3)->timeout(5);
+                }
+
+                $result = $request->get(vsprintf('https://video.bunnycdn.com/library/%s/videos/%s', [
                     config('statamic.bunny.library_id'),
                     $video,
                 ]));
@@ -29,6 +35,11 @@ class VideoRepository
             }
 
             return $result->json();
-        });
+        };
+
+        // Preserve the existing player cache; metadata needs a bounded, library-specific cache.
+        return $ttl === null
+            ? Cache::rememberForever('bunny:' . $video, $fetch)
+            : Cache::remember('bunny:metadata:' . config('statamic.bunny.library_id') . ':' . $video, $ttl, $fetch);
     }
 }

@@ -180,6 +180,27 @@ Add the Bunny fieldtype to any blueprint to store a video ID. The included `bunn
 {{ bunny :id="bunny_video" :poster="bunny_poster[0]" :controls="bunny_controls" :tracks="bunny_captions" }}
 ```
 
+### Public Video Metadata
+
+Metadata routes are disabled by default. To enable a read-only endpoint:
+
+```dotenv
+BUNNY_METADATA_PATH=/api/bunny/videos
+```
+
+`GET /api/bunny/videos/{video-id}` accepts Bunny UUIDs and returns only `id`,
+`title`, `description`, `alt`, and `captions` (only `srclang`, `label`, `version`).
+It never returns arbitrary custom metadata, the library API key, or the raw Bunny
+API response. The editor's `description` meta tag takes precedence over Bunny's
+top-level description. An optional custom `alt` meta tag provides a short
+alternative text. Subtitle files remain on the Bunny CDN at
+`https://{hostname}/{video-id}/captions/{srclang}.vtt`. Metadata is cached server-side for five minutes and
+responses for one minute. Failed requests return a generic `503` response.
+
+Existing fields still store and return video ID strings. Player tags, embedding
+routes, and the existing player cache retain their interfaces. Enabling metadata
+does not change existing content or make the Bunny field return an object.
+
 ## Development
 
 Install frontend dependencies, then build both compatibility bundles:

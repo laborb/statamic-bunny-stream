@@ -46,6 +46,7 @@ class ServiceProvider extends AddonServiceProvider
         Fieldtypes\Bunny::register();
 
         $this->mergeConfigFrom(__DIR__ . '/../config/bunny.php','statamic.bunny');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/metadata.php');
         $this->loadJsonTranslationsFrom(__DIR__ . '/../lang');
 
         $this->publishes([
