@@ -147,6 +147,12 @@ export default {
             return this.deletionConfirmationStep === 2 ? __('Delete from Bunny') : __('Continue');
         },
     },
+    watch: {
+        video(video) {
+            this.localVideo = video;
+            this.thumbnailUrl = `https://${this.bunnyHostname}/${video.guid}/${video.thumbnailFileName}`;
+        },
+    },
     mounted() {
         if (this.localVideo.status < 4) {
             this.polling = setInterval(() => {

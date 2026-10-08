@@ -4,6 +4,7 @@
         "build/v5"
     ],
     "scripts": {
+        "test": "node --test tests/*.test.cjs",
         "dev": "vite",
         "build": "npm run build:v6 && npm run build:v5",
         "build:v5": "npm run build --workspace @laborb/bunny-stream-v5-build",

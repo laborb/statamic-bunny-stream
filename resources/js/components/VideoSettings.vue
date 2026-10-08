@@ -8,7 +8,7 @@
             variant="ghost"
             :aria-label="__('Video Settings')"
             :title="__('Video Settings')"
-            @click="isOpen = true"
+            @click="open"
         />
 
         <bunny-portal v-if="isOpen">
@@ -28,6 +28,13 @@
                             {{ __('Title') }}
                         </label>
                         <ui-input id="title" v-model="videoTitle" name="title" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label :for="accessibilityLabelId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {{ __('Screenreader label') }}
+                        </label>
+                        <ui-input :id="accessibilityLabelId" v-model="videoAccessibilityLabel" name="accessibility-label" />
                     </div>
 
                     <div class="space-y-2">
@@ -151,11 +158,7 @@ export default {
     data() {
         return {
             isOpen: false,
-            videoTitle: this.video.title,
-            videoDescription: this.getMetaTagValue('description') || this.video.description || '',
-            additionalMetaTagsText: this.formatAdditionalMetaTags(this.video.metaTags),
-            captionLanguage: this.video.captions?.[0]?.srclang || '',
-            captionLabel: this.video.captions?.[0]?.label || '',
+            ...this.metadataValues(),
             captionFile: null,
             selectedThumbnailUrl: null,
             thumbnailOpen: false,
@@ -179,11 +182,33 @@ export default {
         captionInputId() {
             return `caption-${this.video.guid}`;
         },
+        accessibilityLabelId() {
+            return `accessibility-label-${this.video.guid}`;
+        },
     },
     methods: {
+        metadataValues() {
+            return {
+                videoTitle: this.video.title,
+                videoDescription: this.getMetaTagValue('description') || this.video.description || '',
+                videoAccessibilityLabel: this.getMetaTagValue('alt') || '',
+                additionalMetaTagsText: this.formatAdditionalMetaTags(this.video.metaTags),
+                captionLanguage: this.video.captions?.[0]?.srclang || '',
+                captionLabel: this.video.captions?.[0]?.label || '',
+            };
+        },
+        open() {
+            Object.assign(this, this.metadataValues());
+            this.captionFile = null;
+            this.selectedThumbnailUrl = null;
+            this.thumbnailOpen = false;
+            this.thumbnailSearch = '';
+            this.isOpen = true;
+        },
         save() {
             if (
                 this.video.title !== this.videoTitle ||
+                (this.getMetaTagValue('alt') || '') !== this.videoAccessibilityLabel ||
                 (this.getMetaTagValue('description') || this.video.description || '') !== this.videoDescription ||
                 this.formatAdditionalMetaTags(this.video.metaTags) !== this.additionalMetaTagsText
             ) {
@@ -312,7 +337,7 @@ export default {
         },
         formatAdditionalMetaTags(metaTags) {
             return (metaTags || [])
-                .filter((tag) => tag.property !== 'description')
+                .filter((tag) => !['description', 'alt'].includes(tag.property))
                 .map((tag) => `${tag.property || ''}=${tag.value || ''}`)
                 .join('\n');
         },
@@ -330,7 +355,11 @@ export default {
                 .filter((tag) => tag.property);
         },
         buildMetaTags() {
-            const tags = this.parseAdditionalMetaTags().filter((tag) => tag.property !== 'description');
+            const tags = this.parseAdditionalMetaTags().filter((tag) => !['description', 'alt'].includes(tag.property));
+
+            if (this.videoAccessibilityLabel.trim()) {
+                tags.unshift({property: 'alt', value: this.videoAccessibilityLabel.trim()});
+            }
 
             if (this.videoDescription.trim()) {
                 tags.unshift({property: 'description', value: this.videoDescription.trim()});
